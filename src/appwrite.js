@@ -16,9 +16,7 @@ export const updateSearchCount = async (searchTerm, movie) => {
     const result = await database.listRows({
       databaseId: DATABASE_ID,
       tableId: TABLE_ID,
-      queries: [
-        Query.equal("searchTerm", searchTerm),
-      ],
+      queries: [Query.equal("searchTerm", searchTerm)],
     });
 
     // 2. If it exists, update the count
@@ -34,7 +32,7 @@ export const updateSearchCount = async (searchTerm, movie) => {
         },
       });
 
-    // 3. If it doesn't exist, create a new row
+      // 3. If it doesn't exist, create a new row
     } else {
       await database.createRow({
         databaseId: DATABASE_ID,
@@ -48,9 +46,20 @@ export const updateSearchCount = async (searchTerm, movie) => {
         },
       });
     }
-
   } catch (error) {
     console.error("Error updating search count:", error);
   }
 };
 
+export const getTrendingMovies = async () => {
+  try {
+    const resault = await database.listRows({
+      databaseId: DATABASE_ID,
+      tableId: TABLE_ID,
+      queries: [Query.limit(10), Query.orderDesc("count")],
+    });
+    return resault.rows;
+  } catch (error) {
+    console.error(error);
+  }
+};
